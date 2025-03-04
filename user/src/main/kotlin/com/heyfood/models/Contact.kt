@@ -1,10 +1,11 @@
 package com.heyfood.models
 
-import java.util.*
-
 data class Contact(
-    val id: String = UUID.randomUUID().toString(),
-    val email: String? = "",
-    val cellphone: String? = "",
-    val phone: String? = ""
+    var id: String? = null,
+    val email: String?,
+    val cellphone: String?,
+    val phone: String?,
+    var person: Person? = null,
+    val createdAt: Long? = null,
+    val updatedAt: Long? = null
 )

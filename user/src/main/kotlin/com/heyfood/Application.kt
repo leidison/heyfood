@@ -5,9 +5,7 @@ import com.heyfood.plugins.configureContentNegotiation
 import com.heyfood.plugins.configureCors
 import com.heyfood.plugins.configureException
 import com.heyfood.plugins.configureValidation
-import com.heyfood.repositories.UserRepository
 import com.heyfood.routing.configureRouting
-import com.heyfood.services.UserService
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {

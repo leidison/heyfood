@@ -13,7 +13,7 @@ fun ContactRequest.toContact(): Contact {
 }
 
 fun Contact.toContactResponse() = ContactResponse(
-    id = this.id,
+    id = this.id ?: "",
     email = this.email,
     cellphone = this.cellphone,
     phone = this.phone

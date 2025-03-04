@@ -21,5 +21,5 @@ object DatabaseConnection {
         dataSource = HikariDataSource(config)
     }
 
-    fun getConnection() = dataSource.connection
+    fun getConnection() = dataSource.connection ?: throw Exception("Could not connect to database")
 }

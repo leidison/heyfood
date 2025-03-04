@@ -7,7 +7,7 @@ import org.valiktor.validate
 data class ContactRequest (val email: String?, val cellphone: String?, val phone: String?) {
     fun validate() {
         validate(this) {
-            validate(ContactRequest::email).isNotBlank().isEmail().hasSize(min = 3, max = 255)
+            validate(ContactRequest::email).isNotNull().isEmail().hasSize(min = 3, max = 255)
             validate(ContactRequest::cellphone).isNotBlank().hasSize(min = 3, max = 255)
             validate(ContactRequest::phone).isNotBlank().hasSize(min = 3, max = 255)
         }

@@ -4,14 +4,37 @@ import com.heyfood.database.DatabaseConnection
 import com.heyfood.models.Contact
 import com.heyfood.models.Person
 import com.heyfood.models.PersonType
-import com.heyfood.models.User
 import java.sql.Connection
 import java.sql.Timestamp
 import java.util.*
 
-object UserRepository {
-    suspend fun create(user: User, conn: Connection? = null) {
-        if (user.person?.id == null) {
+object PersonRepository {
+    suspend fun create(person: Person, conn: Connection? = null) {
+        val connection: Connection = conn ?: DatabaseConnection.getConnection()
+
+        val now = Timestamp(System.currentTimeMillis())
+
+        connection.prepareStatement(
+            """
+            INSERT INTO person (id, type, document, name, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """.trimIndent()
+        ).use { stmt ->
+            person.id = person.id ?: UUID.randomUUID().toString()
+
+            stmt.setString(1, person.id)
+            stmt.setString(2, person.type.toString())
+            stmt.setString(3, person.document)
+            stmt.setString(4, person.name)
+            stmt.setTimestamp(5, now)
+            stmt.setTimestamp(6, now)
+
+            stmt.executeUpdate()
+        }
+    }
+
+    suspend fun update(person: Person, conn: Connection? = null) {
+        if (person.id == null) {
             throw IllegalArgumentException("Person id is required")
         }
 
@@ -21,55 +44,28 @@ object UserRepository {
 
         connection.prepareStatement(
             """
-            INSERT INTO "user" (id, username, person_id, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?)
-            """.trimIndent()
-        ).use { stmt ->
-            user.id = user.id ?: UUID.randomUUID().toString()
-
-            stmt.setString(1, user.id)
-            stmt.setString(2, user.username)
-            stmt.setString(3, user.person!!.id!!)
-            stmt.setTimestamp(4, now)
-            stmt.setTimestamp(5, now)
-
-            stmt.executeUpdate()
-        }
-    }
-
-    suspend fun update(user: User, conn: Connection? = null) {
-        if (user.id == null) {
-            throw IllegalArgumentException("User id is required")
-        }
-
-        val connection: Connection = conn ?: DatabaseConnection.getConnection()
-
-        val now = Timestamp(System.currentTimeMillis())
-
-        connection.prepareStatement(
-            """
-            UPDATE "user"
-            SET username = ?,
-                updated_at = ?
+            UPDATE person
+            SET document = ?,
+                name = ?,
+                updatedAt = ?
             WHERE id = ?
             """.trimIndent()
         ).use { stmt ->
-            stmt.setString(1, user.username)
-            stmt.setTimestamp(2, now)
-            stmt.setString(3, user.id)
+            stmt.setString(1, person.document)
+            stmt.setString(2, person.name)
+            stmt.setTimestamp(3, now)
+            stmt.setString(4, person.id)
 
             stmt.executeUpdate()
         }
     }
 
-    suspend fun find(id: String, conn: Connection? = null): User? {
+    suspend fun find(id: String, conn: Connection? = null): Person? {
         val connection: Connection = conn ?: DatabaseConnection.getConnection()
 
         connection.prepareStatement(
             """
             SELECT
-                "user".id AS user_id,
-                "user".username AS user_username,
                 person.id AS person_id,
                 person.type AS person_type,
                 person.document AS person_document,
@@ -78,12 +74,10 @@ object UserRepository {
                 contact.email AS contact_email,
                 contact.cellphone as contact_cellphone,
                 contact.phone AS contact_phone
-            FROM "user"
-                INNER JOIN person 
-                    ON "user".person_id = person.id
+            FROM person
                 LEFT JOIN contact 
                     ON person.id = contact.person_id
-            WHERE "user".id = ?
+            WHERE person.id = ?
             """.trimIndent()
         ).use { stmt ->
             stmt.setString(1, id)
@@ -91,20 +85,16 @@ object UserRepository {
             val rs = stmt.executeQuery()
 
             return if (rs.next()) {
-                User(
-                    id = rs.getString("user_id"),
-                    username = rs.getString("user_username"),
-                    person = Person(
-                        id = rs.getString("person_id"),
-                        type = PersonType.valueOf(rs.getString("person_type")),
-                        document = rs.getString("person_document"),
-                        name = rs.getString("person_name"),
-                        contact = Contact(
-                            id = rs.getString("contact_id"),
-                            email = rs.getString("contact_email"),
-                            cellphone = rs.getString("contact_cellphone"),
-                            phone = rs.getString("contact_phone")
-                        )
+                Person(
+                    id = rs.getString("person_id"),
+                    type = PersonType.valueOf(rs.getString("person_type")),
+                    document = rs.getString("person_document"),
+                    name = rs.getString("person_name"),
+                    contact = Contact(
+                        id = rs.getString("contact_id"),
+                        email = rs.getString("contact_email"),
+                        cellphone = rs.getString("contact_cellphone"),
+                        phone = rs.getString("contact_phone")
                     )
                 )
             } else {
@@ -113,14 +103,12 @@ object UserRepository {
         }
     }
 
-    suspend fun findBy(take: Int = 50, skip: Int = 0, conn: Connection? = null): List<User> {
+    suspend fun findBy(take: Int = 50, skip: Int = 0, conn: Connection? = null): List<Person> {
         val connection: Connection = conn ?: DatabaseConnection.getConnection()
 
         connection.prepareStatement(
             """
                 SELECT
-                    "user".id AS user_id,
-                    "user".username AS user_username,
                     person.id AS person_id,
                     person.type AS person_type,
                     person.document AS person_document,
@@ -129,9 +117,7 @@ object UserRepository {
                     contact.email AS contact_email,
                     contact.cellphone as contact_cellphone,
                     contact.phone AS contact_phone
-                FROM "user"
-                    INNER JOIN person 
-                        ON "user".person_id = person.id
+                FROM person 
                     LEFT JOIN contact 
                         ON person.id = contact.person_id
                 LIMIT ?
@@ -143,24 +129,20 @@ object UserRepository {
 
             val rs = stmt.executeQuery()
 
-            val users = mutableListOf<User>()
+            val users = mutableListOf<Person>()
 
             while (rs.next()) {
                 users.add(
-                    User(
-                        id = rs.getString("user_id"),
-                        username = rs.getString("user_username"),
-                        person = Person(
-                            id = rs.getString("person_id"),
-                            type = PersonType.valueOf(rs.getString("person_type")),
-                            document = rs.getString("person_document"),
-                            name = rs.getString("person_name"),
-                            contact = Contact(
-                                id = rs.getString("contact_id"),
-                                email = rs.getString("contact_email"),
-                                cellphone = rs.getString("contact_cellphone"),
-                                phone = rs.getString("contact_phone")
-                            )
+                    Person(
+                        id = rs.getString("person_id"),
+                        type = PersonType.valueOf(rs.getString("person_type")),
+                        document = rs.getString("person_document"),
+                        name = rs.getString("person_name"),
+                        contact = Contact(
+                            id = rs.getString("contact_id"),
+                            email = rs.getString("contact_email"),
+                            cellphone = rs.getString("contact_cellphone"),
+                            phone = rs.getString("contact_phone")
                         )
                     )
                 )
@@ -176,7 +158,7 @@ object UserRepository {
         connection.prepareStatement(
             """
             SELECT COUNT(*) AS total
-            FROM "user"
+            FROM person
             """.trimIndent()
         ).use { stmt ->
             val rs = stmt.executeQuery()
@@ -189,21 +171,26 @@ object UserRepository {
         }
     }
 
-    suspend fun existsBy(username: String? = null, conn: Connection? = null): Boolean {
+    suspend fun existsBy(type: String? = null, document: String? = null, conn: Connection? = null): Boolean {
         val connection: Connection = conn ?: DatabaseConnection.getConnection()
 
         val conditions = mutableListOf<String>()
         val values = mutableListOf<String>()
 
-        if (username != null) {
-            conditions.add(""" "user".username = ?""")
-            values.add(username)
+        if (type != null) {
+            conditions.add("person.type = ?")
+            values.add(type)
+        }
+
+        if (document != null) {
+            conditions.add("person.document = ?")
+            values.add(document)
         }
 
         connection.prepareStatement(
             """
             SELECT EXISTS (
-                SELECT 1 FROM "user" 
+                SELECT 1 FROM person 
                 WHERE ${conditions.joinToString(" AND ")}
             )
             """.trimIndent()
@@ -220,6 +207,5 @@ object UserRepository {
                 false
             }
         }
-
     }
 }
