@@ -1,6 +1,7 @@
 package com.heyfood
 
 import com.heyfood.plugins.configureContentNegotiation
+import com.heyfood.plugins.configureCors
 import com.heyfood.plugins.configureException
 import com.heyfood.plugins.configureValidation
 import com.heyfood.routing.configureRouting
@@ -14,6 +15,7 @@ fun main(args: Array<String>) {
 fun Application.module() {
     val userService = UserService()
 
+    configureCors()
     configureContentNegotiation()
     configureException()
     configureValidation()

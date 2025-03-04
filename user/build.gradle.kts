@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.ktor.server.request.validation)
     implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.server.cors)
     implementation(libs.valiktor.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.logback.classic)
