@@ -1,5 +1,4 @@
 package com.heyfood.routing.requests
-import com.heyfood.plugins.Validatable
 import kotlinx.serialization.Serializable
 import org.valiktor.functions.*
 import org.valiktor.validate

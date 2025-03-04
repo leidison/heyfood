@@ -6,10 +6,6 @@ import com.heyfood.utils.validateWithValiktor
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
 
-interface Validatable {
-    fun validate()
-}
-
 fun Application.configureValidation() {
     install(RequestValidation) {
         validateWithValiktor<CreateUserRequest>()

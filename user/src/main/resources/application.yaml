@@ -1,6 +1,0 @@
-ktor:
-    application:
-        modules:
-            - com.heyfood.ApplicationKt.module
-    deployment:
-        port: 3000

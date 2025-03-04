@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.ktor.server.request.validation)
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.server.cors)
+    implementation(libs.hikari)
     implementation(libs.valiktor.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.logback.classic)

@@ -13,7 +13,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.userRoute(
-    userService: UserService
+    userService: UserService = UserService()
 ) {
     post {
         val input = call.receive<CreateUserRequest>()
@@ -23,7 +23,7 @@ fun Route.userRoute(
 
     put("/{id}") {
         val id: String = call.parameters["id"]
-            ?: return@put call.respond(HttpStatusCode.BadRequest)
+            ?: return@put call.respond(HttpStatusCode.BadRequest, "Missing id")
         val input = call.receive<UpdateUserRequest>()
         userService.update(id, input)
         call.respond(HttpStatusCode.NoContent)
@@ -38,7 +38,7 @@ fun Route.userRoute(
 
     get("/{id}") {
         val id: String = call.parameters["id"]
-            ?: return@get call.respond(HttpStatusCode.BadRequest)
+            ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing id")
         val user = userService.find(id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 

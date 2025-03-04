@@ -1,9 +1,8 @@
 package com.heyfood.utils
 
-import com.heyfood.plugins.Validatable
+import com.heyfood.routing.requests.Validatable
 import io.ktor.server.plugins.requestvalidation.*
 import org.valiktor.ConstraintViolationException
-
 
 inline fun <reified T : Validatable> RequestValidationConfig.validateWithValiktor() {
     validate<T> { request ->

@@ -12,6 +12,7 @@ CREATE TABLE contact
 (
     id        varchar(26) PRIMARY KEY,
     email     varchar(255),
+    phone varchar(255),
     cellphone varchar(255),
     person_id varchar(26) NOT NULL
 );
