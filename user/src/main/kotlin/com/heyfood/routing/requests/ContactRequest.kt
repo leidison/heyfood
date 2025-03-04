@@ -1,3 +1,15 @@
 package com.heyfood.routing.requests
+import kotlinx.serialization.Serializable
+import org.valiktor.functions.*
+import org.valiktor.validate
 
-data class ContactRequest (val email: String?, val cellphone: String?, val phone: String?)
+@Serializable
+data class ContactRequest (val email: String?, val cellphone: String?, val phone: String?) {
+    fun validate() {
+        validate(this) {
+            validate(ContactRequest::email).isNotBlank().isEmail().hasSize(min = 3, max = 255)
+            validate(ContactRequest::cellphone).isNotBlank().hasSize(min = 3, max = 255)
+            validate(ContactRequest::phone).isNotBlank().hasSize(min = 3, max = 255)
+        }
+    }
+}

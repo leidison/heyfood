@@ -16,9 +16,9 @@ private fun toUser(name: String, inputContact: ContactRequest?): User {
     )
 }
 
-fun CreateUserRequest.toUser() = toUser(this.name, this.contact)
+fun CreateUserRequest.toUser() = toUser(this.name ?: "", this.contact)
 
-fun UpdateUserRequest.toUser() = toUser(this.name, this.contact)
+fun UpdateUserRequest.toUser() = toUser(this.name ?: "", this.contact)
 
 fun User.toFindUserResponse() = FindUserResponse(
     id = this.id,

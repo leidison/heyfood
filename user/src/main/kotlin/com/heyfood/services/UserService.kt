@@ -7,7 +7,6 @@ import com.heyfood.routing.mappers.toUser
 import com.heyfood.routing.requests.CreateUserRequest
 import com.heyfood.routing.requests.PaginationRequest
 import com.heyfood.routing.requests.UpdateUserRequest
-import com.heyfood.routing.responses.PaginatedResponse
 
 class UserService {
     suspend fun create(input: CreateUserRequest): String {

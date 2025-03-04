@@ -1,14 +1,11 @@
 package com.heyfood.routing
 
-import com.heyfood.models.User
 import com.heyfood.plugins.toPaginationRequest
 import com.heyfood.routing.mappers.toFindUserResponse
 import com.heyfood.routing.mappers.toPaginatedUserResponse
-import com.heyfood.routing.mappers.toUserResponse
 import com.heyfood.routing.requests.CreateUserRequest
 import com.heyfood.routing.requests.UpdateUserRequest
 import com.heyfood.routing.responses.CreatedResponse
-import com.heyfood.routing.responses.PaginatedUserResponse
 import com.heyfood.services.UserService
 import io.ktor.http.*
 import io.ktor.server.request.*

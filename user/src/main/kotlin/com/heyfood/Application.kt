@@ -1,10 +1,11 @@
 package com.heyfood
 
+import com.heyfood.plugins.configureContentNegotiation
+import com.heyfood.plugins.configureException
+import com.heyfood.plugins.configureValidation
 import com.heyfood.routing.configureRouting
 import com.heyfood.services.UserService
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.contentnegotiation.*
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -13,9 +14,8 @@ fun main(args: Array<String>) {
 fun Application.module() {
     val userService = UserService()
 
-    install(ContentNegotiation) {
-        json()
-    }
-
+    configureContentNegotiation()
+    configureException()
+    configureValidation()
     configureRouting(userService)
 }
