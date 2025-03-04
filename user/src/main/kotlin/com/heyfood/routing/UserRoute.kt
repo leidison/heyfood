@@ -6,18 +6,18 @@ import com.heyfood.routing.mappers.toPaginatedUserResponse
 import com.heyfood.routing.requests.CreateUserRequest
 import com.heyfood.routing.requests.UpdateUserRequest
 import com.heyfood.routing.responses.CreatedResponse
-import com.heyfood.services.UserService
+import com.heyfood.usecases.UserUseCases
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.userRoute(
-    userService: UserService = UserService()
+    userUseCases: UserUseCases
 ) {
     post {
         val input = call.receive<CreateUserRequest>()
-        val id = userService.create(input)
+        val id = userUseCases.createUser.execute(input)
         call.respond(HttpStatusCode.Created, CreatedResponse(id))
     }
 
@@ -25,13 +25,13 @@ fun Route.userRoute(
         val id: String = call.parameters["id"]
             ?: return@put call.respond(HttpStatusCode.BadRequest, "Missing id")
         val input = call.receive<UpdateUserRequest>()
-        userService.update(id, input)
+        userUseCases.updateUser.execute(id, input)
         call.respond(HttpStatusCode.NoContent)
     }
 
     get {
         val input = call.toPaginationRequest()
-        val (data, total) = userService.paginate(input)
+        val (data, total) = userUseCases.paginateUsers.execute(input)
 
         call.respond(toPaginatedUserResponse(data, total))
     }
@@ -39,7 +39,7 @@ fun Route.userRoute(
     get("/{id}") {
         val id: String = call.parameters["id"]
             ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing id")
-        val user = userService.find(id)
+        val user = userUseCases.findUser.execute(id)
             ?: return@get call.respond(HttpStatusCode.NotFound)
 
         call.respond(user.toFindUserResponse())

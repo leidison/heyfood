@@ -1,13 +1,15 @@
 package com.heyfood.routing
 
-import com.heyfood.services.UserService
+import com.heyfood.usecases.UserUseCases
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
-fun Application.configureRouting(userService: UserService = UserService()) {
+fun Application.configureRouting(
+    userUseCases: UserUseCases = UserUseCases()
+) {
     routing {
         route("/api/user") {
-            userRoute(userService)
+            userRoute(userUseCases)
         }
     }
 }
