@@ -1,0 +1,25 @@
+volumes:
+  heyfood_db:
+
+services:
+  user_api:
+    container_name: heyfood_user_api
+    build:
+        context: ./user
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17
+    container_name: heyfood_db
+    environment:
+      POSTGRES_USER: heyfood
+      POSTGRES_PASSWORD: heyfood
+      POSTGRES_DB: heyfood
+    ports:
+      - "5432:5432"
+    volumes:
+      - heyfood_db:/var/lib/postgresql/data
