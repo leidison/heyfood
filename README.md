@@ -5,7 +5,7 @@ HeyFood é um conjunto de microserviços desenvolvidos com [Ktor](https://ktor.i
 ## 📌 Visão Geral
 O projeto evoluirá com novas funcionalidades para tornar a solução robusta. Os microserviços operarão dentro de um cluster Kubernetes com suporte a:
 
-- [RabbitMQ](https://www.rabbitmq.com/) para mensageria e filas.
+- [Kafka](https://kafka.apache.org/) e [RabbitMQ](https://www.rabbitmq.com/) para mensageria e filas.
 - [Longhorn](https://longhorn.io/) para armazenamento distribuído.
 - [Grafana](https://grafana.com/) e [Prometheus](https://prometheus.io/) para monitoramento e análise de logs.
 - [Elastic APM](https://www.elastic.co/apm/) para rastreamento de desempenho.
